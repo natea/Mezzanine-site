@@ -1,2 +1,2 @@
-mezzanine
+-e git+git://github.com/natea/Mezzanine-site.git#egg=mezzanine
 PIL
