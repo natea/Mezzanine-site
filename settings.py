@@ -110,9 +110,9 @@ if PACKAGE_NAME_GRAPPELLI in INSTALLED_APPS:
     GRAPPELLI_MEDIA_PATH = os.path.join(
                                _package_path(PACKAGE_NAME_GRAPPELLI), "media")
 if PACKAGE_NAME_FILEBROWSER in INSTALLED_APPS:
-    FILEBROWSER_URL_FILEBROWSER_MEDIA = "/filebrowser/media/"
+    FILEBROWSER_URL_FILEBROWSER_MEDIA = "/site_media/uploads"
     FILEBROWSER_PATH_FILEBROWSER_MEDIA = os.path.join(
-              _package_path(PACKAGE_NAME_FILEBROWSER), "media", "filebrowser")
+              _package_path(PACKAGE_NAME_FILEBROWSER), "site_media", "uploads")
 
 # Caching.
 CACHE_BACKEND = ""
