@@ -1,4 +1,3 @@
-
 # Main Django settings.
 DEBUG = False
 DEV_SERVER = False
@@ -34,7 +33,7 @@ ADMIN_MEDIA_PREFIX = "/media/"
 CACHE_MIDDLEWARE_KEY_PREFIX = _project_dir
 MEDIA_URL = "/site_media/"
 MEDIA_ROOT = os.path.join(_project_path, MEDIA_URL.strip("/"))
-ROOT_URLCONF = "%s.urls" % _project_dir
+ROOT_URLCONF = "urls"
 TEMPLATE_DIRS = (os.path.join(_project_path, "templates"),)
 
 # Apps.
