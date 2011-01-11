@@ -136,5 +136,6 @@ except ImportError:
     pass
     
 # Dynamic settings.
-from mezzanine.utils import set_dynamic_settings
-set_dynamic_settings(globals())
+# This doesn't seem to be used anymore, so commenting it out.
+#from mezzanine.utils import set_dynamic_settings
+#set_dynamic_settings(globals())
