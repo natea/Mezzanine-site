@@ -1,2 +1,2 @@
--e git+git://github.com/stephenmcd/mezzanine.git#egg=mezzanine
+Mezzanine==0.10
 PIL
