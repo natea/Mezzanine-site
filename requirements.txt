@@ -1,2 +1,4 @@
 Mezzanine==0.10
-PIL
+PIL==1.1.7
+django-grappelli==2.3
+django-filebrowser==3.1

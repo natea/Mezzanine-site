@@ -1,4 +1,9 @@
+
+# Mezzanine settings.
+THEME = ""
+
 # Main Django settings.
+TIME_ZONE = ""
 DEBUG = False
 DEV_SERVER = False
 MANAGERS = ADMINS = ()
@@ -6,7 +11,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 LANGUAGE_CODE = "en"
 SITE_ID = 1
 USE_I18N = False
-SECRET_KEY = "aa75ab1e-4926-4628-911d-15de6a0d42f752b0e1ca-38f6-469f-a4d3-00d24d9ae62b6634bd71-2d83-4846-96a4-b40210c519c3"
+SECRET_KEY = "84c29cdf-b5c3-4b18-b086-afa6e67bcaf84cdf4d27-2adb-4e24-9877-b81575ebb3362dc609c6-8d74-4a0a-88fc-5ef0b3d6cbe9"
 INTERNAL_IPS = ("127.0.0.1",)
 TEMPLATE_LOADERS = (
     "django.template.loaders.filesystem.Loader",
@@ -16,12 +21,18 @@ TEMPLATE_LOADERS = (
 # Databases.
 DATABASES = {
     "default": {
+        # "postgresql_psycopg2", "postgresql", "mysql", "sqlite3" or "oracle".
         "ENGINE": "",
-        "HOST": "",
+        # DB name or path to database file if using sqlite3.
         "NAME": "",
-        "PASSWORD": "",
-        "PORT": "",
+        # Not used with sqlite3.
         "USER": "",
+        # Not used with sqlite3.
+        "PASSWORD": "",
+        # Set to empty string for localhost. Not used with sqlite3.
+        "HOST": "",
+         # Set to empty string for default. Not used with sqlite3.
+        "PORT": "",
     }
 }
 
@@ -31,9 +42,9 @@ _project_path = os.path.dirname(os.path.abspath(__file__))
 _project_dir = _project_path.split(os.sep)[-1]
 ADMIN_MEDIA_PREFIX = "/media/"
 CACHE_MIDDLEWARE_KEY_PREFIX = _project_dir
-MEDIA_URL = "/site_media/"
+MEDIA_URL = "/static/"
 MEDIA_ROOT = os.path.join(_project_path, MEDIA_URL.strip("/"))
-ROOT_URLCONF = "urls"
+ROOT_URLCONF = "%s.urls" % _project_dir
 TEMPLATE_DIRS = (os.path.join(_project_path, "templates"),)
 
 # Apps.
@@ -65,20 +76,19 @@ MIDDLEWARE_CLASSES = (
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.redirects.middleware.RedirectFallbackMiddleware",
-    "django.middleware.cache.UpdateCacheMiddleware",
+    "mezzanine.core.middleware.DeviceAwareUpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.middleware.cache.FetchFromCacheMiddleware",
-    "mezzanine.core.middleware.MobileTemplate",
+    "mezzanine.core.middleware.DeviceAwareFetchFromCacheMiddleware",
     "mezzanine.core.middleware.AdminLoginInterfaceSelector",
 )
 
-# Store these package names here as they may change in the future since 
+# Store these package names here as they may change in the future since
 # at the moment we are using custom forks of them.
 PACKAGE_NAME_FILEBROWSER = "filebrowser_safe"
 PACKAGE_NAME_GRAPPELLI = "grappelli_safe"
 
-# Optional apps.
+# Optional apps - these will be added to ``INSTALLED_APPS`` if available.
 OPTIONAL_APPS = (
     "debug_toolbar",
     "south",
@@ -87,8 +97,11 @@ OPTIONAL_APPS = (
     PACKAGE_NAME_GRAPPELLI,
 )
 
+DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
+
 import sys
-if not (len(sys.argv) > 1 and sys.argv[1] == "test"):
+TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
+if not TESTING:
     for app in OPTIONAL_APPS:
         try:
             __import__(app)
@@ -98,44 +111,12 @@ if not (len(sys.argv) > 1 and sys.argv[1] == "test"):
             INSTALLED_APPS += (app,)
 INSTALLED_APPS = sorted(list(INSTALLED_APPS), reverse=True)
 
-# Optional app settings.
-_package_path = lambda p: os.path.dirname(__import__(p).__file__)
-if "debug_toolbar" in INSTALLED_APPS:
-    DEBUG_TOOLBAR_CONFIG = {"INTERCEPT_REDIRECTS": False}
-    MIDDLEWARE_CLASSES += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
-if PACKAGE_NAME_GRAPPELLI in INSTALLED_APPS:
-    GRAPPELLI_ADMIN_HEADLINE = "Mezzanine"
-    GRAPPELLI_ADMIN_TITLE = "Mezzanine"
-    GRAPPELLI_MEDIA_PATH = os.path.join(
-                               _package_path(PACKAGE_NAME_GRAPPELLI), "media")
-if PACKAGE_NAME_FILEBROWSER in INSTALLED_APPS:
-    FILEBROWSER_URL_FILEBROWSER_MEDIA = "/site_media/uploads"
-    FILEBROWSER_PATH_FILEBROWSER_MEDIA = os.path.join(
-              _package_path(PACKAGE_NAME_FILEBROWSER), "site_media", "uploads")
-
-# Caching.
-CACHE_BACKEND = ""
-CACHE_TIMEOUT = CACHE_MIDDLEWARE_SECONDS = 0
-try:
-    import cmemcache
-except ImportError:
-    try:
-        import memcache
-    except ImportError:
-        CACHE_BACKEND = "locmem:///"
-if not CACHE_BACKEND:
-    CACHE_TIMEOUT = CACHE_MIDDLEWARE_SECONDS = 180
-    CACHE_BACKEND = "memcached://127.0.0.1:11211/?timeout=%s" % \
-                                                    CACHE_MIDDLEWARE_SECONDS
-    CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True
-
 # Local settings.
 try:
     from local_settings import *
 except ImportError:
     pass
-    
+
 # Dynamic settings.
-# This doesn't seem to be used anymore, so commenting it out.
-#from mezzanine.utils import set_dynamic_settings
-#set_dynamic_settings(globals())
+from mezzanine.utils.conf import set_dynamic_settings
+set_dynamic_settings(globals())
